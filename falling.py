@@ -9,8 +9,9 @@ def y_prime(y, z, t):
 
 
 def z_prime(y, z, t):
-    return z
+    return 0
 
+# gamma is the coefficient for air resistance
 gamma = 0.392
 mass = 2
 
@@ -29,10 +30,8 @@ z_soln[0] = 1
 for i in range(1, steps):
     y_soln[i], z_soln[i] = rk.rungekutta4(delta_t, time_grid[i-1], (y_soln[i-1], z_soln[i-1]), y_prime, z_prime)
 
-    # collect solution data for plotting
+# collect solution data for plotting
 df1 = pd.DataFrame({'t': time_grid, 'u': y_soln})
-# df2 = pd.DataFrame({'t': time_grid, 'u': z_soln})
-
 
 fig, ax1 = plt.subplots(figsize=(10, 6))
 color = 'tab:green'
