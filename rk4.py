@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def RK4(init, t, dfuncs, h):
+def rungekutta4(dt, t, y, *funcs):
     """
     The following code was written in order to
     reproduce the classic 4th order Runge-Kutta numerical
@@ -13,24 +13,24 @@ def RK4(init, t, dfuncs, h):
     that is generic enough to accept a wide range of ODEs and
     systems of ODEs.
 
-    :param init: the solution vector y_(n-1) from the previous step
+    :param y: the solution vector y_(n-1) from the previous step
     used to solve for the solution at the next step, y_n.
     :param t: is the previous time step
-    :param dfuncs: the vector field dy/dt = f(t,y)
-    :param h: is the previous spacial grid-step
+    :param funcs: the vector field dy/dt = f(t,y)
+    :param dt: is the previous spacial grid-step
     :return: The estimated solution at the given next step
     """
 
-    k1 = [h * f(*init, t) for f in dfuncs]
-    args = [r + 0.5 * kr for r, kr in zip((*init, t), (*k1, h))]
-    k2 = [h * f(*args) for f in dfuncs]
-    args = [r + 0.5 * kr for r, kr in zip((*init, t), (*k2, h))]
-    k3 = [h * f(*args) for f in dfuncs]
-    args = [r + kr for r, kr in zip((*init, t), (*k3, h))]
-    k4 = [h * f(*args) for f in dfuncs]
+    k1 = [dt * f(*y, t) for f in funcs]
+    args = [y_n + 0.5 * k_1 for y_n, k_1 in zip((*y, t), (*k1, dt))]
+    k2 = [dt * f(*args) for f in funcs]
+    args = [y_n + 0.5 * k_2 for y_n, k_2 in zip((*y, t), (*k2, dt))]
+    k3 = [dt * f(*args) for f in funcs]
+    args = [y_n + k_3 for y_n, k_3 in zip((*y, t), (*k3, dt))]
+    k4 = [dt * f(*args) for f in funcs]
 
     return (r + (k1r + 2 * k2r + 2 * k3r + k4r) / 6 for r, k1r, k2r, k3r, k4r in
-            zip(init, k1, k2, k3, k4))
+            zip(y, k1, k2, k3, k4))
 
 
 if __name__ == '__main__':
@@ -47,7 +47,6 @@ if __name__ == '__main__':
     # dS/dt =
     def fy(B, S, E, t):
         return r_s*S*(1 - (S*K_e) / (E*K_s))
-
 
     # dE/dt =
     def fz(B, S, E, t):
@@ -79,9 +78,9 @@ if __name__ == '__main__':
     # Set initial conditions
     B[0], S[0], E[0], t[0] = 1e-16, .075 * K_s, 1., 0.
 
-    # Solve the system using RK4
+    # Solve the system using rungekutta4
     for i in range(1, steps):
-        B[i], S[i], E[i] = RK4((B[i - 1], S[i - 1], E[i - 1]), t[i - 1], (fx, fy, fz), Dt)
+        B[i], S[i], E[i] = rungekutta4(Dt, t[i - 1], (B[i - 1], S[i - 1], E[i - 1]), fx, fy, fz)
 
     # collect and plot data
     df1 = pd.DataFrame({'t': np.arange(0, t_n, Dt), 'u': B})

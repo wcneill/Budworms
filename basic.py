@@ -1,4 +1,4 @@
-from RK4 import RK4
+from rk4 import rungekutta4
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,7 +23,7 @@ z[0] = z0
 t[0] = t0
 
 for i in range(1, steps):
-    y[i], z[i] = RK4((y[i-1], z[i-1]), t[i-1], (dy, dz), Dt)
+    y[i], z[i] = rungekutta4((y[i - 1], z[i - 1]), t[i - 1], (dy, dz), Dt)
     t[i] = t[i-1] + Dt
     print(z[i])
 
