@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
 
 
 def rungekutta4(dt, t, y, *funcs):
@@ -16,6 +17,11 @@ def rungekutta4(dt, t, y, *funcs):
     NOTE*** this function requires at least two ODEs to function
     properly. I have not been able to sort out the code to allow
     a single equation to be solved.
+
+    This implementation of RK4 assumes that the ODEs are coupled,
+    and therefore when declaring the vector field equations,
+    they must all have the same arguments in the same order
+    whether or not they are actually used by all of the equations.
 
     :param y: the solution vector y_(n-1) from the previous step
     used to solve for the solution at the next step, y_n.
@@ -69,27 +75,28 @@ if __name__ == '__main__':
     P = 0.00195
     T = 0.1
     t_0 = 0.
-    t_n = 50.
-    Dt = .5
+    t_n = 100.
+    Dt = .05
     steps = int(np.floor((t_n - t_0) / Dt))
 
     # initialize solution vectors
-    t = steps * [0.0]
-    B = steps * [0.0]
-    S = steps * [0.0]
-    E = steps * [0.0]
+    time = np.linspace(t_0, t_n, steps, endpoint=False)
+    B_soln = steps * [0.0]
+    S_soln = steps * [0.0]
+    E_soln = steps * [0.0]
 
     # Set initial conditions
-    B[0], S[0], E[0], t[0] = 1e-16, .075 * K_s, 1., 0.
+    B_soln[0], S_soln[0], E_soln[0], time[0] = 1e-16, .075 * K_s, 1., 0.
 
     # Solve the system using rungekutta4
+
     for i in range(1, steps):
-        B[i], S[i], E[i] = rungekutta4(Dt, t[i - 1], (B[i - 1], S[i - 1], E[i - 1]), fx, fy, fz)
+        B_soln[i], S_soln[i], E_soln[i] = rungekutta4(Dt, time[i - 1], (B_soln[i - 1], S_soln[i - 1], E_soln[i - 1]), fx, fy, fz)
 
     # collect and plot data
-    df1 = pd.DataFrame({'t': np.arange(0, t_n, Dt), 'u': B})
-    df2 = pd.DataFrame({'t': np.arange(0, t_n, Dt), 'u': S})
-    df3 = pd.DataFrame({'t': np.arange(0, t_n, Dt), 'u': E})
+    df1 = pd.DataFrame({'t': time, 'u': B_soln})
+    df2 = pd.DataFrame({'t': time, 'u': S_soln})
+    df3 = pd.DataFrame({'t': time, 'u': E_soln})
 
     fig, ax1 = plt.subplots(figsize=(10, 6))
     fig.subplots_adjust(right=0.9)

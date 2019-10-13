@@ -7,38 +7,45 @@ import rk4 as rk
 
 if __name__ == '__main__':
 
+    # ODE 1: y' = e^(-t^2 / 2)
     def y_prime(y, z, t):
         return -t * y
 
+    # ODE 2: y' = y
     def z_prime(y, z, t):
         return z
 
+    # Set the interval over which we want a solution.
     t_0 = -10
     t_n = 10
     dt = .05
 
+    # Determine number of steps in accordance with mesh size
     steps = int((t_n - t_0) / dt)
 
+    # Initialize solution vectors
     y_soln = [0.0] * steps
     z_soln = [0.0] * steps
-    time = np.arange(t_0, t_n, dt)
+    time = np.linspace(t_0, t_n, steps, endpoint=False)
 
+    # Initial conditions for t = t_0
     y_soln[0] = 1.928749848e-22
     z_soln[0] = .0000453999297625
 
-    for i in np.arange(1, steps):
+    # Solve equations starting at time index 1 (i = 0 is covered by the initial conditions above
+    for i in range(1, steps):
         y_soln[i], z_soln[i] = rk.rungekutta4(dt, time[i - 1], (y_soln[i - 1], z_soln[i - 1]), y_prime, z_prime)
 
-    error1 = []
+    error = []
     for i in np.arange(steps):
-        error1.append(abs(math.e ** ((-time[i] ** 2)/2) - y_soln[i]))
+        error.append(abs(math.e ** ((-time[i] ** 2)/2) - y_soln[i]))
 
     # collect solution data for plotting
     df1 = pd.DataFrame({'t': time, 'u': y_soln})
     df2 = pd.DataFrame({'t': time, 'u': z_soln})
 
     # collect error data for plotting
-    df3 = pd.DataFrame({'t': time, 'error': error1})
+    df3 = pd.DataFrame({'t': time, 'error': error})
 
     fig, ax1 = plt.subplots(figsize=(10, 6))
     color = 'tab:green'
