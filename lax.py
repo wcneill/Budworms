@@ -3,29 +3,42 @@ from numpy import arange, zeros
 import pandas as pd
 from matplotlib import pyplot as plt
 
-# This algorithm was written to provide a numerical solution
-# 1-D wave equation using the Lax method, and to analyze trends
-# error in our algorithm. The exact solution we are comparing
-# our results to is u(pi, t) = -cos(t). This program will
-# both plot the solution and the error for two different
-# mesh sizes (Dx .005*4pi and .01*4pi).
 
-# function applies periodic boundary condition
-# h - Period
-# f - function to apply conditions on
-# i - index
-# Dx - spacial mesh size
-# M - Interval endpoint (not including ghost zone)
 def apply_pbc(f, i, Dx, M, h):
+    """
+    This algorithm was written to provide a numerical solution
+    1-D wave equation using the Lax method, and to analyze trends
+    error in our algorithm. The exact solution we are comparing
+    our results to is u(pi, t) = -cos(t). This program will
+    both plot the solution and the error for two different
+    mesh sizes (Dx .005*4pi and .01*4pi).
+
+
+    :param f: The function to apply conditions on
+    :param i: The current index
+    :param Dx: Spacial mesh size
+    :param M: Interval endpoint (not including ghost zones)
+    :param h: period of boundary condition
+    :return:
+    """
     f[i][0] = f[i][int(h/Dx)]
     f[i][int((M + Dx)/Dx)] = f[i][int((M + Dx)/Dx - 1)]
 
     return f
 
-# function for finding an index associated with
-# a particular data point of interest for plotting
-# or other analysis
+
 def find_index(start, stop, step, x):
+    """
+    function for finding an index associated with
+    a particular data point of interest for plotting
+    or other analysis
+
+    :param start: start of search range
+    :param stop:  end of search range
+    :param step:  step size to search over
+    :param x: the value we are searching for
+    :return:
+    """
     counter = len(arange(start, stop, step))
     for i in arange(counter):
         x_i = start + i*step
@@ -35,6 +48,7 @@ def find_index(start, stop, step, x):
             break
 
     return index
+
 
 # main body
 if __name__ == "__main__":
