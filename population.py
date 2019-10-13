@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 def x_prime(x, y, z, t):
     return r * x * (1 - x / k)
 
+
 def y_prime(x, y, z, t):
     return r * y * (1 - y / k)
 
