@@ -13,6 +13,10 @@ def rungekutta4(dt, t, y, *funcs):
     that is generic enough to accept a wide range of ODEs and
     systems of ODEs.
 
+    NOTE*** this function requires at least two ODEs to function
+    properly. I have not been able to sort out the code to allow
+    a single equation to be solved.
+
     :param y: the solution vector y_(n-1) from the previous step
     used to solve for the solution at the next step, y_n.
     :param t: is the previous time step

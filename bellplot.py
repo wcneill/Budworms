@@ -31,9 +31,6 @@ if __name__ == '__main__':
 
     error1 = []
     for i in np.arange(steps):
-        print("time = ", time[i])
-        print("actual:", abs(math.e ** ((-time[i] ** 2)/2)))
-        print("estimate: ", y_soln[i])
         error1.append(abs(math.e ** ((-time[i] ** 2)/2) - y_soln[i]))
 
     # collect solution data for plotting
