@@ -5,6 +5,22 @@ import time as tm
 
 
 def rk4(dt, t, field, y_n):
+    """
+    The following code was written in order to
+    reproduce the classic 4th order Runge-Kutta numerical
+    method of solving a system of differential equations.
+    The aim was to not only apply this to the budworm deforestation
+    model developed by Ludwig et al, but also to create an algorithm
+    that is generic enough to accept a wide range of ODEs and
+    systems of ODEs.
+
+
+    :param dt: time step
+    :param t:  time at last iteration
+    :param field: vector field y' = f(t, y), must be numpy array
+    :param y_n: solution vector at last iteration
+    :return:  solution vector at current iteration
+    """
 
     k1 = dt * field(t, y_n)
     k2 = dt * field(t + 0.5 * dt, y_n + 0.5 * k1)

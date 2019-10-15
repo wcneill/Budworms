@@ -17,23 +17,24 @@ def field(t, vect):
 gamma = 0.392
 mass = 2
 
+# declare interval and step size
 t_0 = 0
 t_n = 50
 delta_t = .25
 steps = int((t_n - t_0) / delta_t)
 
+# initialize solution vector and mesh
 x = np.zeros((3, steps))
 time_grid = np.arange(t_0, t_n, delta_t)
 
+# declare initial conditions
 x[:, 0] = [100, 75, 0]
 
+# solve
 for i in np.arange(1, steps):
     x[:, i] = rk.rk4(delta_t, time_grid[i - 1], field, x[:, i - 1])
 
 df = pd.DataFrame(x, index=['x', 'y', 'z'], columns=time_grid)
-
-print(df.loc['y', :])
-
 
 color = 'red'
 fig, ax1 = plt.subplots(figsize=(10, 6))
@@ -53,18 +54,3 @@ plt.gca().set_ylim((0, 100))
 plt.grid(True)
 
 plt.show()
-#
-# ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-# ax2.plot('t', 'u', data=df2, color=color)
-# plt.grid(True)
-# plt.gca().set_ylim(y_range)
-#
-# ax3 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-# ax3.plot('t', 'u', data=df3, color=color)
-# plt.grid(True)
-# plt.gca().set_ylim(y_range)
-#
-# fig.tight_layout()
-#
-# plt.grid(True)
-# plt.show()
