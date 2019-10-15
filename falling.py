@@ -31,9 +31,6 @@ for i in np.arange(1, steps):
 
 df = pd.DataFrame(x, index=['x', 'y', 'z'], columns=time_grid)
 
-print(df.loc['y', :])
-
-
 color = 'red'
 fig, ax1 = plt.subplots(figsize=(10, 6))
 ax1.set_xlabel('time (s)')
