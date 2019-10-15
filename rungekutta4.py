@@ -17,17 +17,18 @@ def rk4(dt, t, field, y_n):
 if __name__ == '__main__':
 
     def system(t, vect):
-        # The following three functions represent the three ODEs in question
-        # dB/Dt =
 
-        B, S, E = vect
+        b, s, e = vect
 
-        return np.array([(r_b * B * (1 - (B * (pow(T, 2)
-                         + pow(E, 2))) / (K * S * pow(E, 2)))
-                         - (beta * pow(B, 2)) / (pow((alpha * S), 2)
-                         + pow(B, 2))),
-                         r_s * S * (1 - (S * K_e) / (E * K_s)),
-                         r_e * E * (1 - E / K_e) - (P * B * pow(E, 2)) / (S * (pow(T, 2) + pow(E, 2)))])
+        return np.array([(r_b * b * (1 - (b * (pow(T, 2)
+                         + pow(e, 2))) / (K * s * pow(e, 2)))
+                          - (beta * pow(b, 2)) / (pow((alpha * s), 2)
+                                                  + pow(b, 2))),
+
+                         r_s * s * (1 - (s * K_e) / (e * K_s)),
+
+                         r_e * e * (1 - e / K_e) - (P * b * pow(e, 2))
+                         / (s * (pow(T, 2) + pow(e, 2)))])
 
 
     # set parameter values from Ludwig paper
@@ -50,33 +51,33 @@ if __name__ == '__main__':
 
     # Initialize solution vector and initial conditions
     x = np.zeros((3, steps))
-    x[:,0] = [1e-16, .075 * K_s, 1.]
+    x[:, 0] = [1e-16, .075 * K_s, 1.]
 
     # Solve the system of equations
     start = tm.time()
     for i in np.arange(1, steps):
-        x[:,i] = rk4(Dt, time[i - 1], system, x[:,i - 1])
+        x[:, i] = rk4(Dt, time[i - 1], system, x[:, i - 1])
     print("runtime was", tm.time() - start, "seconds")
 
-    #Create Pandas DataFrame
+    # Create Pandas DataFrame
     df = pd.DataFrame(x, index=['B', 'S', 'E'], columns=time)
 
-    fig, ax1 = plt.subplots(figsize=(10,6))
+    fig, ax1 = plt.subplots(figsize=(10, 6))
     fig.subplots_adjust(right=0.75)
 
-    color='red'
+    color = 'red'
     ax1.set_xlabel('Years')
     ax1.set_ylabel('Budworm Population Density', color=color)
     ax1.plot(time, df.loc['B', :], color=color)
     ax1.tick_params(axis='y', labelcolor=color)
 
-    color='green'
+    color = 'green'
     ax2 = ax1.twinx()
     ax2.set_ylabel('Foliage Density', color=color)
     ax2.plot(time, df.loc['S', :], color=color)
     ax2.tick_params(axis='y', labelcolor=color)
 
-    color='blue'
+    color = 'blue'
     ax3 = ax1.twinx()
     ax3.spines["right"].set_position(("axes", 1.2))
     ax3.set_ylabel('Foliage Health', color=color)
@@ -84,6 +85,3 @@ if __name__ == '__main__':
     ax3.tick_params(axis='y', labelcolor=color)
 
     plt.show()
-
-
-
