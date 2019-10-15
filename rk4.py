@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import time
+import time as tm
 
 
 def rungekutta4(dt, t, y, *funcs):
@@ -45,6 +45,7 @@ def rungekutta4(dt, t, y, *funcs):
 
 if __name__ == '__main__':
 
+
     # The following three functions represent the three ODEs in question
     # dB/Dt =
     def fx(B, S, E, t):
@@ -57,6 +58,7 @@ if __name__ == '__main__':
     # dS/dt =
     def fy(B, S, E, t):
         return r_s*S*(1 - (S*K_e) / (E*K_s))
+
 
     # dE/dt =
     def fz(B, S, E, t):
@@ -75,7 +77,7 @@ if __name__ == '__main__':
     P = 0.00195
     T = 0.1
     t_0 = 0.
-    t_n = 100.
+    t_n = 50.
     Dt = .05
     steps = int(np.floor((t_n - t_0) / Dt))
 
@@ -89,9 +91,10 @@ if __name__ == '__main__':
     B_soln[0], S_soln[0], E_soln[0], time[0] = 1e-16, .075 * K_s, 1., 0.
 
     # Solve the system using rungekutta4
-
+    start = tm.time()
     for i in range(1, steps):
         B_soln[i], S_soln[i], E_soln[i] = rungekutta4(Dt, time[i - 1], (B_soln[i - 1], S_soln[i - 1], E_soln[i - 1]), fx, fy, fz)
+    print("runtime was", tm.time() - start, " seconds")
 
     # collect and plot data
     df1 = pd.DataFrame({'t': time, 'u': B_soln})
@@ -122,3 +125,4 @@ if __name__ == '__main__':
 
     fig.tight_layout()
     plt.show()
+
