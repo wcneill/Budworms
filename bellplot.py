@@ -9,14 +9,13 @@ if __name__ == '__main__':
 
     # the ODE y' = -t * y, which has solution y = exp(-t^2 / 2)
     def field(t, vect):
-        y = vect
-        return np.array([-t * y])
+        return np.array([-t * vect])
 
 
     # Set the interval over which we want a solution.
     t_0 = -10
     t_n = 10
-    dt = .05
+    dt = .1
 
     # Determine number of steps in accordance with mesh size
     steps = int((t_n - t_0) / dt)

@@ -6,11 +6,7 @@ import matplotlib.pyplot as plt
 
 # ODE modelling velocity of a falling object
 def field(t, vect):
-    p, q, r = vect
-
-    return np.array([9.8 - gamma / mass * p,
-                    9.8 - gamma / mass * q,
-                    9.8 - gamma / mass * r])
+    return np.array([9.8 - gamma / mass * vect])
 
 
 # gamma is the coefficient for air resistance
