@@ -1,52 +1,43 @@
-import rungekutta4 as rk
+from rungekutta4 import rk4
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
 # ODE modelling velocity of a falling object
-def field(t, vect):
-    return np.array([9.8 - gamma / mass * vect])
+def field(t, v):
+    v_dot = 9.8 - (gamma / mass) * v
+    return v_dot
+
+
+def f(t, v0, t0):
+    # constant of integration for IVP
+    c = (v0 - 9.8 * (gamma / mass)) * np.exp(gamma * t0 / mass)
+    return 9.8 * (gamma / mass) - c * np.exp(-gamma * t / mass)
 
 
 # gamma is the coefficient for air resistance
 gamma = 0.392
-mass = 2
+mass = 3.2
 
 # declare interval and step size
-t_0 = 0
-t_n = 50
-delta_t = .25
-steps = int((t_n - t_0) / delta_t)
+t_0 = 0.
+t_n = 50.
+delta = 0.05
 
-# initialize solution vector and mesh
-x = np.zeros((3, steps))
-time_grid = np.arange(t_0, t_n, delta_t)
+# set initial condition:
+x_0 = 75.
 
-# declare initial conditions
-x[:, 0] = [100, 75, 0]
+fig, axs = plt.subplots(figsize=(10, 6))
 
-# solve
-for i in np.arange(1, steps):
-    x[:, i] = rk.rk4(delta_t, time_grid[i - 1], field, x[:, i - 1])
+axs.set_ylabel('Velocity')
+axs.set_xlabel('Time')
 
-df = pd.DataFrame(x, index=['x', 'y', 'z'], columns=time_grid)
+for x_0 in np.arange(0., 100., 10):
+    # Solve for each initial condition
+    time = np.arange(t_0, t_n, delta)
+    x = rk4(delta, time, field, x_0)
 
-color = 'red'
-fig, ax1 = plt.subplots(figsize=(10, 6))
-ax1.set_xlabel('time (s)')
-ax1.set_ylabel('velocity')
-ax1.plot(time_grid, df.loc['x', :], color=color)
-plt.gca().set_ylim((0, 100))
-
-ax2 = ax1.twinx()
-ax2.plot(time_grid, df.loc['y', :], color=color)
-plt.gca().set_ylim((0, 100))
-
-ax3 = ax1.twinx()
-ax3.plot(time_grid, df.loc['z', :], color=color)
-plt.gca().set_ylim((0, 100))
-
-plt.grid(True)
+    # Plot results
+    axs.plot(time, x, label=r"$\Delta t=$%.3f" % delta)
 
 plt.show()
