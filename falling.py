@@ -14,7 +14,6 @@ def f(t, v0, t0):
     c = (v0 - 9.8 * (gamma / mass)) * np.exp(gamma * t0 / mass)
     return 9.8 * (gamma / mass) - c * np.exp(-gamma * t / mass)
 
-
 # gamma is the coefficient for air resistance
 gamma = 0.392
 mass = 3.2
