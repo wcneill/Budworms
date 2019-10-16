@@ -28,7 +28,7 @@ if __name__ == '__main__':
     x[0] = 1.928749848e-22
     error[0] = 0
 
-    for i in range(1, steps):
+    for i in range(1, steps - 1):
         x[i] = rk.rk4(dt, time[i-1], field, x[i-1])
         error[i] = abs(x[i] - math.pow(math.e, (-time[i] ** 2) / 2)) / math.pow(math.e, (-time[i] ** 2) / 2)
 
