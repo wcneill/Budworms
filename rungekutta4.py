@@ -19,8 +19,7 @@ def rk4(dt, t, field, y_0):
         k1 = dt * field(t[i], y[i])
         k2 = dt * field(t[i] + 0.5 * dt, y[i] + 0.5 * k1)
         k3 = dt * field(t[i] + 0.5 * dt, y[i] + 0.5 * k2)
-        k4 = dt * field(t[i] + 0.5 * dt, y[i] + k3)
-        res = y[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6
+        k4 = dt * field(t[i] + dt, y[i] + k3)
         y[i + 1] = y[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6
 
 
