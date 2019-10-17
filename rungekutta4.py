@@ -74,6 +74,7 @@ if __name__ == '__main__':
 
     fig, ax1 = plt.subplots(figsize=(10, 6))
     fig.subplots_adjust(right=0.75)
+    fig.suptitle('Forest Health and Population Dynamics')
 
     color = 'red'
     ax1.set_xlabel('Years')
