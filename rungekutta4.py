@@ -8,7 +8,7 @@ def rk4(dt, t, field, y_0):
     :param dt: float - the timestep
     :param t: array - the time mesh
     :param field: method - the vector field y' = f(t, y)
-    :param y_0: array - containains initial conditions
+    :param y_0: array - contains initial conditions
     :return: ndarray - solution
     """
 

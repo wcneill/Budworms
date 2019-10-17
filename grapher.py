@@ -10,9 +10,7 @@ def graph(eqn, start, stop):
 
 if __name__ == '__main__':
 
-    def eqn(x): return x**3 + x**3 * np.sin(x)
+    def eqn(x): return np.sqrt(x)
+
     graph(eqn, -100, 100)
 
-    # y = square(np.arange(-10, 10, 1))
-    #
-    # print(y)
