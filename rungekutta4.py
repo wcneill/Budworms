@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pylab as plt
 import time as tm
 
+
 def rk4(dt, t, field, y_0):
     """
     :param dt: float - the timestep
@@ -12,7 +13,9 @@ def rk4(dt, t, field, y_0):
     :return: ndarray - solution
     """
 
-    # solution matrix, solutions are row vectors
+    # Initialize solution matrix. Each row is the solution to the system
+    # for a given time step. Each column is the full solution for a single
+    # equation.
     y = np.asarray(len(t) * [y_0])
 
     for i in np.arange(len(t) - 1):
@@ -21,7 +24,6 @@ def rk4(dt, t, field, y_0):
         k3 = dt * field(t[i] + 0.5 * dt, y[i] + 0.5 * k2)
         k4 = dt * field(t[i] + dt, y[i] + k3)
         y[i + 1] = y[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6
-
 
     return y
 
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     T = 0.1
     t_0 = 0.
     t_n = 50.
-    Dt = .5
+    Dt = .1
 
     steps = int(np.floor((t_n - t_0) / Dt))
     time = np.arange(t_0, t_n, Dt)
