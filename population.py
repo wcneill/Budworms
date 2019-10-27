@@ -14,7 +14,7 @@ k = 100
 # Set start and stop, stop, mesh size
 t_0 = 0.
 t_n = 10.
-delta_t = .25
+delta_t = .1
 time_grid = np.arange(t_0, t_n, delta_t)
 
 # Set initial conditions
@@ -31,7 +31,16 @@ plt.legend()
 
 for xi, col in zip(x_0, ['red', 'orange', 'green']):
     x = rk.rk4(delta_t, time_grid, field, xi)
-    plt.plot(time_grid, x, label="Initial Population = %f" % xi, color=col)
+    plt.plot(time_grid, x, label="Initial Population = %f" % xi, color=col, linewidth=1.75)
+
+# create and plot vector field overlay
+x = np.linspace(t_0, t_n, 11)
+y = np.linspace(0, max(x_0), 11)
+X, Y = np.meshgrid(x, y)
+theta = np.arctan(field(X, Y))
+U = np.cos(theta)
+V = np.sin(theta)
+plt.quiver(X, Y, U, V, angles='xy', width=0.001)
 
 plt.show()
 

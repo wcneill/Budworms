@@ -106,3 +106,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 /pos_args_practice.py
+/qiverpractice.py
