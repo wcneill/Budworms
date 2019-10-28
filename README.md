@@ -1,4 +1,4 @@
-# Budworms
+# Numerical Methods
 This repository started as a home-made Runge-Kutta algorithm applied to a system of ODEs describing the population dynamics
 of the eastern spruce budworm in Canada's spruce forests (Ludwig 1978). This was my Master's graduate research project.
 
