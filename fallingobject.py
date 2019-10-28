@@ -32,7 +32,7 @@ axs.set_xlabel('Time')
 for x_0 in np.arange(0., 101., 20):
     # Solve for each initial condition and plot
     x = rk4(delta, time, field, x_0)
-    axs.plot(time, x, label=r"$v_0=$%.3f" % x_0, linewidth=1.75)
+    axs.plot(time, x, 'r--', label=r"$v_0=$%.3f" % x_0, linewidth=2)
 
 # calculate and plot vector field overlay:
 x = np.linspace(0,50, 11) # time from zero to 50 inclusive
@@ -50,8 +50,7 @@ theta = np.arctan(field(X, Y))
 U = np.cos(theta)
 V = np.sin(theta)
 
-plt.quiver(X, Y, U, V, width=0.0022, angles='xy')
+plt.quiver(X, Y, U, V, width=0.0015, angles='xy')
 
 plt.grid()
-plt.legend(loc='lower right', framealpha=1)
 plt.show()
