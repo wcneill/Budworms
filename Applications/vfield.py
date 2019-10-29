@@ -10,8 +10,10 @@ def vf_grapher(fn, t_0, t_n, dt, y_0, lintype='-r', sup_title=None,
     :param fn: y' = f(t, y)
     :param t_0: start
     :param t_n: stop
-    :param dt: step size
-    :param y_0: initial conditions, may be an iterable
+    :param dt: step size for the runge-kutta solver
+    :param y_0: initial conditions. If there is only one initial condition,
+    it must be passed as a list, not a numpy array as a 0-d array cannot be
+    iterated over.
     :param lintype: color and line style, example: 'r--' for
     red dashed line
     :param sup_title: Super Title
@@ -32,7 +34,13 @@ def vf_grapher(fn, t_0, t_n, dt, y_0, lintype='-r', sup_title=None,
     axs.set_ylabel(ylab)
     axs.set_xlabel(xlab)
 
-    for iv in np.asarray(y_0):
+    # in case the user passes a single float as an initial condition:
+    # try:
+    #     iter(y_0)
+    # except TypeError:
+    #     y_0 = [y_0]
+
+    for iv in np.array(y_0, ndmin=1, copy=False):
         soln = rk4(dt, t, fn, iv)
         plt.plot(t, soln, lintype)
         if y_min > np.min(soln):
@@ -45,14 +53,14 @@ def vf_grapher(fn, t_0, t_n, dt, y_0, lintype='-r', sup_title=None,
 
     X, Y = np.meshgrid(x, y)
 
-    theta = np.arctan(f(X, Y))
+    theta = np.arctan(fn(X, Y))
 
     U = np.cos(theta)
     V = np.sin(theta)
 
     plt.quiver(X, Y, U, V, angles='xy')
     plt.xlim((t_0, t_n - dt))
-    plt.ylim((y_min - .1 * y_min, y_max + .1 * y_max))
+    plt.ylim((y_min - .05 * y_min, y_max + .05 * y_max))
     plt.show()
 
 
