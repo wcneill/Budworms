@@ -15,7 +15,7 @@ def grapher(fn, t_0, t_n, dt, y_0):
     :return:
     """
 
-    t = np.arange(0, 4, dt)
+    t = np.arange(t_0, t_n, dt)
     y_min = .0
     y_max = .0
 
@@ -45,4 +45,4 @@ def grapher(fn, t_0, t_n, dt, y_0):
 if __name__ == '__main__':
     def f(t, x): return x**2 - x
 
-    grapher(f,0,4,0.1, (-0.9, 0.9, 1))
+    grapher(f, 0, 4, 0.1, (-0.9, 0.9, 1.1))
