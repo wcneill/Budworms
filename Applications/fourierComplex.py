@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # Assuming the interval [-l, l] apply discrete fourier transform:
 
     # number of waves to sum
-    wvs = 50
+    wvs = 30
 
     # step size for calculating c_m coefficients (trap rule)
     deltax = .025 * np.pi
