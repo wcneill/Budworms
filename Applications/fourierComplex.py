@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def coefficients(fn, dx, m, interval):
+def coefficients(fn, dx, m, L):
     """
     Calculate the complex form fourier series coefficients for the first M
     waves.
@@ -10,23 +10,22 @@ def coefficients(fn, dx, m, interval):
     :param fn: function to sample
     :param dx: sampling frequency
     :param m: number of waves to compute
-    :param interval: length of the interval over which we integrate
+    :param L: We are solving on the interval [-L, L]
     :return: an array containing M Fourier coefficients c_m
     """
 
-    L = interval/2
-    N = interval/dx
+    N = 2*L / dx
     coeffs = np.zeros(m, dtype=np.complex_)
-    x = np.arange(0, interval, dx)
+    xk = np.arange(-L, L + dx, dx)
 
     # Calculate the coefficients for each wave
     for mi in range(m):
-        coeffs[mi] = 2/N * sum(fn(x)*np.exp(-1j * mi * np.pi * x / L))
-        print(coeffs[mi])
+        coeffs[mi] = 1/N * sum(fn(xk)*np.exp(-1j * mi * np.pi * xk / L))
+
     return coeffs
 
 
-def fourier_graph(range, c_coef, function=None, plot=True, err_plot=False):
+def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
     """
     Given a range to plot and an array of complex fourier series coefficients,
     this function plots the representation.
@@ -75,11 +74,19 @@ def fourier_graph(range, c_coef, function=None, plot=True, err_plot=False):
 
 if __name__ == '__main__':
 
-    wvs = 10 # number of waves to sum
-    deltax = .05 * np.pi # step size for calculating c_m coefficients (trap rule)
-    period = 2 * np.pi # length of interval for Fourier Series
-    L = period / 2
-    x = np.arange(-period, period, .1)
+    # Assuming the interval [-l, l] apply discrete fourier transform:
 
-    c_m = coefficients(np.exp, deltax, wvs, period)
-    sol = fourier_graph(x, c_m, np.exp, err_plot=True)
+    # number of waves to sum
+    wvs = 50
+
+    # step size for calculating c_m coefficients (trap rule)
+    deltax = .025 * np.pi
+
+    # length of interval for Fourier Series is 2*l
+    l = 2 * np.pi
+
+    c_m = coefficients(np.exp, deltax, wvs, l)
+
+    # The x range we would like to interpolate function values
+    x = np.arange(-l, l, .01)
+    sol = fourier_graph(x, l, c_m, np.exp, err_plot=True)
