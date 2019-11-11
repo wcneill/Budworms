@@ -2,25 +2,37 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def coefficients(fn, dx, m, L):
+def coefficients(fn, dx, L):
     """
     Calculate the complex form fourier series coefficients for the first M
     waves.
 
     :param fn: function to sample
     :param dx: sampling frequency
-    :param m: number of waves to compute
     :param L: We are solving on the interval [-L, L]
     :return: an array containing M Fourier coefficients c_m
     """
-
+    
     N = 2*L / dx
+
+    # m is the number of DFT coefficients to calculate. N/2 coefficients are sufficient
+    # Proof:
+    # Minimum sampling given a oscillating function is lambda/2, where lambda is the
+    # period of oscillation of the function we sample. In other words dx = lambda/2
+    # for a minimally resolved  estimate. So with fixed dx, the smallest wavelength
+    # we can hope to resolve is lambda_min = 2*dx. Also note that the wavelength of
+    # sin(n*pi*x / L) is given by 2L/n. So then our minimum wavelength is given by
+    # lambda_min = 2L/n_min = 2*dx. Rearranging, we see that the smallest wave number
+    # n is n_min = 2L/lambda_min = 2L/(2*dx) = L/dx = L/(2L/N) = N/2.
+
+    m = int(N/2 + 1)
+    
     coeffs = np.zeros(m, dtype=np.complex_)
     xk = np.arange(-L, L + dx, dx)
 
     # Calculate the coefficients for each wave
     for mi in range(m):
-        coeffs[mi] = 1/N * sum(fn(xk)*np.exp(-1j * mi * np.pi * xk / L))
+        coeffs[mi] = 2/N * sum(fn(xk)*np.exp(-1j * mi * np.pi * xk / L))
 
     return coeffs
 
@@ -85,7 +97,7 @@ if __name__ == '__main__':
     # length of interval for Fourier Series is 2*l
     l = 2 * np.pi
 
-    c_m = coefficients(np.exp, deltax, wvs, l)
+    c_m = coefficients(np.exp, deltax, l)
 
     # The x range we would like to interpolate function values
     x = np.arange(-l, l, .01)
