@@ -11,9 +11,7 @@ def vf_grapher(fn, t_0, t_n, dt, y_0, lintype='-r', sup_title=None,
     :param t_0: start
     :param t_n: stop
     :param dt: step size for the runge-kutta solver
-    :param y_0: initial conditions. If there is only one initial condition,
-    it must be passed as a list, not a numpy array as a 0-d array cannot be
-    iterated over.
+    :param y_0: initial conditions.
     :param lintype: color and line style, example: 'r--' for
     red dashed line
     :param sup_title: Super Title
@@ -33,12 +31,6 @@ def vf_grapher(fn, t_0, t_n, dt, y_0, lintype='-r', sup_title=None,
     axs.set_title(title)
     axs.set_ylabel(ylab)
     axs.set_xlabel(xlab)
-
-    # in case the user passes a single float as an initial condition:
-    # try:
-    #     iter(y_0)
-    # except TypeError:
-    #     y_0 = [y_0]
 
     for iv in np.array(y_0, ndmin=1, copy=False):
         soln = rk4(dt, t, fn, iv)
