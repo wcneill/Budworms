@@ -12,7 +12,7 @@ def coefficients(fn, dx, L):
     :param L: We are solving on the interval [-L, L]
     :return: an array containing M Fourier coefficients c_m
     """
-    
+
     N = 2*L / dx
 
     # m is the number of DFT coefficients to calculate. N/2 coefficients are sufficient
@@ -26,13 +26,15 @@ def coefficients(fn, dx, L):
     # n is n_min = 2L/lambda_min = 2L/(2*dx) = L/dx = L/(2L/N) = N/2.
 
     m = int(N/2 + 1)
-    
+    print(m)
+
     coeffs = np.zeros(m, dtype=np.complex_)
-    xk = np.arange(-L, L + dx, dx)
+    xk = np.arange(-L, L, dx)
 
     # Calculate the coefficients for each wave
     for mi in range(m):
-        coeffs[mi] = 2/N * sum(fn(xk)*np.exp(-1j * mi * np.pi * xk / L))
+        n = mi - m/2
+        coeffs[mi] = 1/N * sum(fn(xk) * np.exp(-1j * n * np.pi * xk / L))
 
     return coeffs
 
@@ -57,7 +59,8 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
     s = np.zeros(len(range))
     for i, ix in enumerate(range):
         for iw in np.arange(w):
-            s[i] += c_coef[iw] * np.exp(1j * iw * np.pi * ix / L)
+            n = iw - w/2
+            s[i] += c_coef[iw] * np.exp(1j * n * np.pi * ix / L)
 
     # If a plot is desired:
     if plot:
@@ -86,12 +89,7 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
 
 if __name__ == '__main__':
 
-    # Assuming the interval [-l, l] apply discrete fourier transform:
-
-    # number of waves to sum
-    wvs = 30
-
-    # step size for calculating c_m coefficients (trap rule)
+    # step size for calculating c_m coefficients with trapezoid rule
     deltax = .025 * np.pi
 
     # length of interval for Fourier Series is 2*l
@@ -100,5 +98,5 @@ if __name__ == '__main__':
     c_m = coefficients(np.exp, deltax, l)
 
     # The x range we would like to interpolate function values
-    x = np.arange(-l, l, .01)
+    x = np.arange(0, l, .01)
     sol = fourier_graph(x, l, c_m, np.exp, err_plot=True)
