@@ -5,7 +5,7 @@ import numpy as np
 def coefficients(fn, dx, L):
     """
     Calculate the complex form fourier series coefficients for the first M
-    waves.
+    waves using extended trapezoid rule.
 
     :param fn: function to sample
     :param dx: sampling frequency
@@ -44,7 +44,6 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
     Given a range to plot and an array of complex fourier series coefficients,
     this function plots the representation.
 
-
     :param range: the x-axis values to plot
     :param c_coef: the complex fourier coefficients, calculated by coefficients()
     :param plot: Default True. Plot the fourier representation
@@ -65,7 +64,7 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
     # If a plot is desired:
     if plot:
         plt.suptitle("Fourier Series Plot")
-        plt.xlabel(r"$t$")
+        plt.xlabel(r"$x$")
         plt.ylabel(r"$f(x)$")
         plt.plot(range, s, label="Fourier Series")
 
@@ -89,14 +88,15 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
 
 if __name__ == '__main__':
 
+
     # step size for calculating c_m coefficients with trapezoid rule
     deltax = .025 * np.pi
 
     # length of interval for Fourier Series is 2*l
-    l = 2 * np.pi
+    l = np.pi
 
-    c_m = coefficients(np.exp, deltax, l)
+    c_m = coefficients(lambda x: np.e**x, deltax, l)
 
     # The x range we would like to interpolate function values
-    x = np.arange(0, l, .01)
-    sol = fourier_graph(x, l, c_m, np.exp, err_plot=True)
+    x = np.arange(-l*4, l*4, .01)
+    sol = fourier_graph(x, l, c_m, lambda x: x**2, plot=True)
