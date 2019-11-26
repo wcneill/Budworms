@@ -15,7 +15,8 @@ def coefficients(fn, dx, L):
 
     N = 2*L / dx
 
-    # m is the number of DFT coefficients to calculate. N/2 coefficients are sufficient
+    # m = N/2 is the number of Fourier coefficients to calculate. N/2 coefficients
+    # is sufficient.
     # Proof:
     # Minimum sampling given a oscillating function is lambda/2, where lambda is the
     # period of oscillation of the function we sample. In other words dx = lambda/2
@@ -87,7 +88,6 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
 
 
 if __name__ == '__main__':
-
 
     # step size for calculating c_m coefficients with trapezoid rule
     deltax = .025 * np.pi
