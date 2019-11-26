@@ -26,7 +26,7 @@ def coefficients(fn, dx, L):
     # lambda_min = 2L/n_min = 2*dx. Rearranging, we see that the smallest wave number
     # n is n_min = 2L/lambda_min = 2L/(2*dx) = L/dx = L/(2L/N) = N/2.
 
-    m = int(N/2 + 1)
+    m = int(N/2)
     print(m)
 
     coeffs = np.zeros(m, dtype=np.complex_)
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     # length of interval for Fourier Series is 2*l
     l = np.pi
 
-    c_m = coefficients(lambda x: np.e**x, deltax, l)
+    c_m = coefficients(lambda x: x**2, deltax, l)
 
     # The x range we would like to interpolate function values
     x = np.arange(-l*4, l*4, .01)
