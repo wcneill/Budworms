@@ -4,6 +4,13 @@ import matplotlib.pylab as plt
 import time as tm
 
 
+"""
+This code was written as part of a larger project to develope a model that accurately describes the biological 
+interractions between a pest insect and its habitat, namely the eastern spruce budworm and the spruce forests it 
+inhabits. The model is developed in the written paper, and here the system of equations is solved and displayed 
+graphically. The solution is calculated and displayed using the below define Runge-Kutta 4 numerical method and 
+matplotlib library.
+"""
 def rk4(dt, t, field, y_0):
     """
     :param dt: float - the timestep
