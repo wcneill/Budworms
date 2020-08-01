@@ -56,7 +56,7 @@ def fourier_graph(range, L, c_coef, function=None, plot=True, err_plot=False):
     w = len(c_coef)
 
     # Initialize solution array
-    s = np.zeros(len(range))
+    s = np.zeros(len(range), dtype=np.complex_)
     for i, ix in enumerate(range):
         for iw in np.arange(w):
             n = iw - w/2
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     # length of interval for Fourier Series is 2*l
     l = np.pi
 
-    c_m = coefficients(lambda x: x**2, deltax, l)
+    c_m = coefficients(lambda x: x**3, deltax, l)
 
     # The x range we would like to interpolate function values
     x = np.arange(-l*4, l*4, .01)
