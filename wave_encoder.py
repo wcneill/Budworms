@@ -4,99 +4,108 @@ from scipy.signal import find_peaks
 
 class WaveEncoder():
     def __init__(self):
-        self.wave = None
+        self.signal = None
         self.time = None
+        self.rate = None
+        self.period = None
         self.components = None
-        self.wind_freqs = None
-        self.comp_freqs = None
-        self.comp_energ = None
-        self.energies   = None
+        self.fs = None
+        self.es = None
+        self.idxs = None
 
-    def fit(self, wave, time_series, freqs, threshold=None, plot=True):
-        self.wave = wave
-        self.time = time_series
-        self.wind_freqs = freqs
-        self.components = self.decompose(time_series, wave, freqs, threshold=threshold)
+    def fit(self, signal, s_rate, s_period, s_time, threshold=None, plot=True):
+        self.signal = signal
+        self.rate = s_rate
+        self.period = s_period
+        self.time = s_time
+        self.components = self.decompose(signal, s_period, s_rate, s_time, threshold=threshold)
         if plot:
             self.plot_fit()
         return self
 
-    def wind(self, timescale, data, w_freq):
+    def transform(self, signal, positive_only=True):
         """
-        wrap time-series data around a circle on complex plain
-        at given winding frequency.
+        Returns frequencies and amplitudes of transformation domain and range
         """
-        return data * np.exp(2 * np.pi * w_freq * timescale * 1.j)
+        N = len(signal)
+        e = np.fft.fft(signal) / N
+        e = np.abs(e)
+        f = np.fft.fftfreq(N, self.period)
 
-    def transform(self, x, y, freqs):
-        """
-        Returns center of mass of each winding frequency
-        """
-        ft = []
-        for f in freqs:
-            mapped = self.wind(x, y, f)
-            re, im = np.real(mapped).mean(), np.imag(mapped).mean()
-            mag = np.sqrt(re ** 2 + im ** 2)
-            ft.append(mag)
+        if positive_only:
+            e = e[range(int(N / 2))]
+            f = f[range(int(N / 2))]
 
-        return np.array(ft)
+        return e, f
 
-    def get_waves(self, parts, time):
+    def get_waves(self, amps, freqs, period, rate, time):
         """
-        Generate sine waves based on frequency parts.
+        Generate sine waves with given frequency and amplitude.
         """
-        num_waves = len(parts)
-        steps = len(time)
-        waves = np.zeros((num_waves, steps))
-        for i in range(num_waves):
-            waves[i] = np.sin(parts[i] * 2 * np.pi * time)
+        N = rate * time
+        t_vec = np.arange(N) * period
+
+        waves = []
+        for f, a in zip(freqs, amps):
+            waves.append(a * np.sin(2 * np.pi * f * t_vec))
 
         return waves
 
-
-    def decompose(self, time, data, freqs, threshold=None):
+    def decompose(self, signal, s_period, s_rate, s_time, threshold=None):
         """
         Decompose and return the individual components of a composite wave form.
         Plot each component wave.
         """
-        self.energies = self.transform(time, data, freqs)
-        peaks, _ = find_peaks(self.energies, threshold=threshold)
-        self.comp_freqs = freqs[peaks]
-        self.comp_energ = self.energies[peaks]
+        es, fs = self.transform(signal, s_period)
+        self.es, self.fs = es, fs
 
-        return self.get_waves(self.comp_freqs, time)
+        self.idxs, _ = find_peaks(es, threshold=threshold)
+        amps, freqs = es[self.idxs], fs[self.idxs]
+
+        return self.get_waves(amps, freqs, s_period, s_rate, s_time)
 
     def plot_original(self):
         try:
-            plt.plot(self.time, self.wave, '.')
+            N = self.rate * self.time
+            t_vec = np.arange(N) * self.period
+            plt.plot(t_vec, self.signal, '.')
+            plt.title('Signal')
             plt.xlabel('Time')
             plt.ylabel('Amplitude')
             plt.show()
         except ValueError:
-            print('Encoder must be fit against composite wave before plotting')
-            exit(1)
-
+            print('plt_original: Encoder must be fit against composite wave before plotting')
+            raise
 
     def plot_components(self):
         try:
-            for wave, freq in zip(self.components, self.comp_freqs):
-                plt.plot(self.time, wave, label=f'Frequency: {freq} Hz')
-            plt.legend()
+            N = self.rate * self.time
+            t_vec = np.arange(N) * self.period
+
+            fig, axes = plt.subplots(len(self.components), 1)
+            for i, wave in enumerate(self.components):
+                axes[i].plot(t_vec, wave)
+            plt.xlabel('Time')
+            plt.ylabel('Amplitude')
             plt.show()
         except ValueError:
-            print('Encoder must be fit against composite wave before plotting')
-            exit(1)
+            print('plt_components: Encoder must be fit against composite wave before plotting')
+            raise
 
     def plot_energy(self):
         try:
-            plt.plot(self.wind_freqs, self.energies, 'b.--', label='Energy vs Frequency')
-            plt.plot(self.comp_freqs, self.comp_energ, 'ro', label='Peaks')
+            plt.plot(self.fs, self.es, 'b.--', label='Energy vs Frequency')
+            plt.plot(self.fs[self.idxs],
+                     self.es[self.idxs],
+                     'ro', label=f'Peak Frequencies:\n{self.fs[self.idxs]}')
             plt.xlabel('Frequency')
+            plt.ylabel('Frequency Strength')
+            plt.gca().set_xscale('log')
             plt.legend(), plt.grid()
             plt.show()
         except ValueError:
-            print('Encoder must be fit against composite wave before plotting')
-            exit(1)
+            print('plot_energy: Encoder must be fit against composite wave before plotting')
+            raise
 
     def plot_fit(self):
             self.plot_original()
@@ -104,10 +113,17 @@ class WaveEncoder():
             self.plot_components()
 
 if __name__ == '__main__':
-    f1 = 3
-    f2 = 5
-    x = np.linspace(0, 1, 200)
-    y = np.cos(f1 * 2 * np.pi * x) + np.sin(f2 * 2 * np.pi * x)
-    winding_freqs = np.arange(0, 20, .5)
-    encoder = WaveEncoder().fit(y, x, winding_freqs, threshold=0.12)
+    f1 = 1
+    f2 = .5
 
+    # Sample rate, sample period, time to sample
+    Fs = 100
+    T = 1/Fs
+    t = 10
+
+    # 'Sample' signal
+    N = Fs * t
+    t_vec = np.arange(N) * T
+    signal = np.sin(2 * np.pi * f1 * t_vec) + np.sin(2 * np.pi * f2 * t_vec)
+
+    encoder = WaveEncoder().fit(signal, Fs, T, t, threshold=0.12)
